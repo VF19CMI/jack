@@ -1,1 +1,1 @@
-# jadc (JSON API Data Converter)
+# jack (JSON API converter kit)
