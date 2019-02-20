@@ -299,26 +299,26 @@ test('parse: a simple array with includes', t => {
         data: [
             {
                 type: 'tasks', id: '1', attributes: { name: 'Test 1' },
-                relationships: { owner: { type: 'owner', id: '1' } }
+                relationships: { owner: { data: { type: 'owners', id: '1' } } }
             },
             {
                 type: 'tasks', id: '2', attributes: { name: 'Test 2' },
-                relationships: { owner: { type: 'owner', id: '1' } }
+                relationships: { owner: { data: { type: 'owners', id: '1' } } }
             },
             {
                 type: 'tasks', id: '3', attributes: { name: 'Test 3' },
-                relationships: { owner: { type: 'owner', id: '2' } }
+                relationships: { owner: { data: { type: 'owners', id: '2' } } }
             }
         ],
         included: [
-            { type: 'owner', id: '1', attributes: { name: 'God' } },
-            { type: 'owner', id: '2', attributes: { name: 'Jesus' } }
+            { type: 'owners', id: '1', attributes: { name: 'God' } },
+            { type: 'owners', id: '2', attributes: { name: 'Jesus' } }
         ]
     };
     const expectedData = [
-        { type: 'tasks', id: '1', attributes: { name: 'Test 1' }, owner: { type: 'owner', id: '1', attributes: { name: 'God' } } },
-        { type: 'tasks', id: '2', attributes: { name: 'Test 2' }, owner: { type: 'owner', id: '1', attributes: { name: 'God' } } },
-        { type: 'tasks', id: '3', attributes: { name: 'Test 3' }, owner: { type: 'owner', id: '2', attributes: { name: 'Jesus' } } }
+        { type: 'tasks', id: '1', attributes: { name: 'Test 1' }, owner: { type: 'owners', id: '1', attributes: { name: 'God' } } },
+        { type: 'tasks', id: '2', attributes: { name: 'Test 2' }, owner: { type: 'owners', id: '1', attributes: { name: 'God' } } },
+        { type: 'tasks', id: '3', attributes: { name: 'Test 3' }, owner: { type: 'owners', id: '2', attributes: { name: 'Jesus' } } }
     ];
 
     t.deepEqual(m.parse(testData), expectedData);

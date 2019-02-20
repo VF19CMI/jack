@@ -12,6 +12,7 @@ const generateObject = (data, included) => {
         if (data.relationships) {
             Object.keys(data.relationships).forEach(key => {
                 if (data.relationships[key] && data.relationships[key].data) {
+
                     if (Array.isArray(data.relationships[key].data)) {
                         obj[key] = [];
 
@@ -22,8 +23,12 @@ const generateObject = (data, included) => {
                             });
                         }
                     } else {
-                        const item = included.find(i => i.type === data.relationships[key].data.type && i.id === data.relationships[key].data.id);
-                        obj[key] = item || {};
+                        obj[key] = {};
+
+                        if (included) {
+                            const item = included.find(i => i.type === data.relationships[key].data.type && i.id === data.relationships[key].data.id);
+                            if (item) obj[key] = item;
+                        }
                     };
                 } else {
                     obj[key] = {};
@@ -42,6 +47,7 @@ const parse = (r) => {
     if (Array.isArray(r.data)) {
         // data contains a list of objects
         parsed = [];
+        r.data.forEach(d => parsed.push(generateObject(d, r.included)));
     } else {
         // data is a single object
         parsed = generateObject(r.data, r.included);
