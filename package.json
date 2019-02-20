@@ -1,0 +1,16 @@
+{
+  "name": "jadc",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "ava",
+    "test:watch": "ava --watch --verbose"
+  },
+  "author": "Krisztian Nagy <chrisakakay@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "ava": "^1.1.0",
+    "eslint": "^5.12.1"
+  }
+}
