@@ -154,6 +154,67 @@ test('parse: simple object with relationships and includes', t => {
     t.deepEqual(m.parse(testData), expectedData);
 });
 
+test('parse: simple object with relationships and includes (nested)', t => {
+    const testData = {
+        data: {
+            type: 'tasklists',
+            id: '1',
+            relationships: {
+                tasks: {
+                    data: { type: 'tasks', id: '1' }
+                }
+            }
+        },
+        included: [
+            { type: 'tasks', id: '1', attributes: { name: 'Test 1' }, relationships: { owner: { data: { type: 'owners', id: '1' } } } },
+            { type: 'owners', id: '1', attributes: { name: 'Nested God' } }
+        ]
+    };
+    const expectedData = {
+        type: 'tasklists',
+        id: '1',
+        attributes: {},
+        tasks: { type: 'tasks', id: '1', attributes: { name: 'Test 1' }, owner: { id: '1', type: 'owners', attributes: { name: 'Nested God' } } }
+    };
+
+    t.deepEqual(m.parse(testData), expectedData);
+});
+
+test('parse: simple object with relationships and includes array (nested )', t => {
+    const testData = {
+        data: {
+            type: 'tasklists',
+            id: '1',
+            relationships: {
+                tasks: {
+                    data: [
+                        { type: 'tasks', id: '1' },
+                        { type: 'tasks', id: '2' }
+                    ]
+                }
+            }
+        },
+        included: [
+            { type: 'tasks', id: '1', attributes: { name: 'Test 1' }, relationships: { owner: { data: { type: 'owners', id: '1' } } } },
+            { type: 'tasks', id: '2', attributes: { name: 'Test 2' }, relationships: { owner: { data: { type: 'owners', id: '1' } } } },
+            { type: 'owners', id: '1', attributes: { name: 'Nested God' } }
+        ]
+    };
+    const expectedData = {
+        type: 'tasklists',
+        id: '1',
+        attributes: {},
+        tasks: [
+            { type: 'tasks', id: '1', attributes: { name: 'Test 1' }, owner: { id: '1', type: 'owners', attributes: { name: 'Nested God' } } },
+            { type: 'tasks', id: '2', attributes: { name: 'Test 2' }, owner: { id: '1', type: 'owners', attributes: { name: 'Nested God' } } }
+        ]
+    };
+
+    t.deepEqual(m.parse(testData), expectedData);
+});
+
+// TODO nested with bad data
+
 test('parse: simple object with relationships and includes with wrong data', t => {
     const testData = {
         data: {
@@ -323,7 +384,6 @@ test('parse: a simple array with includes', t => {
 
     t.deepEqual(m.parse(testData), expectedData);
 });
-
 
 /*
 test('', t => {
