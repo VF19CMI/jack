@@ -17,7 +17,6 @@ const generateObject = (data, included) => {
             if (included) {
               data.relationships[key].data.forEach(r => {
                 const item = included.find(i => i.type === r.type && i.id === r.id);
-                // if (item) obj[key].push(item);
                 if (item) obj[key].push(generateObject(item, included));
               });
             }
