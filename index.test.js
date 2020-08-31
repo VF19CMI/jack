@@ -1,5 +1,4 @@
-import test from 'ava';
-
+const test = require('ava');
 const m = require('./index.js');
 
 test('parse is exposed', t => {
@@ -180,7 +179,7 @@ test('parse: simple object with relationships and includes (nested)', t => {
   t.deepEqual(m.parse(testData), expectedData);
 });
 
-test('parse: simple object with relationships and includes array (nested )', t => {
+test('parse: simple object with relationships and includes array (nested)', t => {
   const testData = {
     data: {
       type: 'tasklists',
@@ -383,6 +382,92 @@ test('parse: a simple array with includes', t => {
   ];
 
   t.deepEqual(m.parse(testData), expectedData);
+});
+
+test('clone: simple object without attributes', t => {
+  const testData = {
+    data: {
+      type: 'tasklists',
+      id: '1'
+    }
+  };
+  const testParsed = m.parse(testData);
+  const testCloned = m.clone(testParsed);
+
+  t.deepEqual(testCloned, testParsed);
+  t.not(testParsed, testCloned);
+});
+
+test('clone: simple object with relationships and includes', t => {
+  const testData = {
+    data: {
+      type: 'tasklists',
+      id: '1',
+      relationships: {
+        tasks: {
+          data: [
+            { type: 'tasks', id: '1' }
+          ]
+        }
+      }
+    },
+    included: [
+      { type: 'tasks', id: '1', attributes: { name: 'Test 1' } }
+    ]
+  };
+  const testParsed = m.parse(testData);
+  const testCloned = m.clone(testParsed);
+
+  t.deepEqual(testCloned, testParsed);
+  t.not(testParsed, testCloned);
+});
+
+test('parse (config): maxDepthLevel bigger than the parsed', t => {
+  const testData = {
+    data: {
+      type: 'projects', id: '1', attributes: { name: 'Project 1' },
+      relationships: {
+        tasks: { data: [{ type: 'tasks', id: '1' }] }
+      }
+    },
+    included: [
+      { type: 'tasks', id: '1', attributes: { name: 'Task 1' }, relationships: { owner: { data: { type: 'owners', id: '1' } } } },
+      { type: 'owners', id: '1', attributes: { name: 'Owner 1' } }
+    ]
+  };
+
+  const expectedData = {
+    type: 'projects', id: '1', attributes: { name: 'Project 1' },
+    tasks: [
+      { type: 'tasks', id: '1', attributes: { name: 'Task 1' }, owner: { id: '1', type: 'owners', attributes: { name: 'Owner 1' } } },
+    ]
+  };
+
+  t.deepEqual(m.parse(testData, { maxDepthLevel: 3 }), expectedData);
+});
+
+test('parse (config): maxDepthLevel restricting data', t => {
+  const testData = {
+    data: {
+      type: 'projects', id: '1', attributes: { name: 'Project 1' },
+      relationships: {
+        tasks: { data: [{ type: 'tasks', id: '1' }] }
+      }
+    },
+    included: [
+      { type: 'tasks', id: '1', attributes: { name: 'Task 1' }, relationships: { owner: { data: { type: 'owners', id: '1' } } } },
+      { type: 'owners', id: '1', attributes: { name: 'Owner 1' } }
+    ]
+  };
+
+  const expectedData = {
+    type: 'projects', id: '1', attributes: { name: 'Project 1' },
+    tasks: [
+      { type: 'tasks', id: '1', attributes: { name: 'Task 1' }, owner: {} },
+    ]
+  };
+
+  t.deepEqual(m.parse(testData, { maxDepthLevel: 2 }), expectedData);
 });
 
 /*

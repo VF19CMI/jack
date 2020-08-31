@@ -1,6 +1,6 @@
 {
   "name": "jack",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,6 +10,6 @@
   "author": "Krisztian Nagy <chrisakakay@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "ava": "^2.4.0"
+    "ava": "^3.12.1"
   }
 }
