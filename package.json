@@ -9,7 +9,8 @@
   },
   "author": "Krisztian Nagy <chrisakakay@gmail.com>",
   "license": "MIT",
+  "type": "module",
   "devDependencies": {
-    "ava": "^3.12.1"
+    "ava": "4.3.3"
   }
 }
