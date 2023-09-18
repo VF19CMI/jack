@@ -114,23 +114,70 @@ test('using simple data with attributes', t => {
   t.is(JSON.stringify(expected), s.toJSON());
 });
 
-test('using simple class with id/type', t => {
-  class Car {
-    type = 'cars';
-
-    constructor(id) {
-      this.id = id
-    }
-  };
-
+test('using simple data with functions true', t => {
   const s = new Serializer({
-    data: new Car(2)
+    data: { id: 1, type: 'user', name: 'Krisz', roles: ['ADMIN', 'USER'] },
+    attributes: [
+      'name',
+      { name: 'admin', value: (t) => t.roles.includes('ADMIN') }
+    ]
   });
   const expected =   {
     data: {
-      id: 2,
-      type: 'cars',
-      attributes: {},
+      id: 1,
+      type: 'user',
+      attributes: {
+        name: 'Krisz',
+        admin: true
+      },
+      relationships: {}
+    },
+    included: []
+  };
+
+  t.is(JSON.stringify(expected), s.toJSON());
+});
+
+test('using simple data with functions false', t => {
+  const s = new Serializer({
+    data: { id: 1, type: 'user', name: 'Krisz', roles: ['USER'] },
+    attributes: [
+      'name',
+      { name: 'admin', value: (t) => t.roles.includes('ADMIN') }
+    ]
+  });
+  const expected =   {
+    data: {
+      id: 1,
+      type: 'user',
+      attributes: {
+        name: 'Krisz',
+        admin: false
+      },
+      relationships: {}
+    },
+    included: []
+  };
+
+  t.is(JSON.stringify(expected), s.toJSON());
+});
+
+test('using simple data with functions and objects as attributes', t => {
+  const s = new Serializer({
+    data: { id: 1, type: 'user', name: 'Krisz', roles: ['ADMIN', 'USER'] },
+    attributes: [
+      { name: 'name' },
+      { name: 'admin', value: (t) => t.roles.includes('ADMIN') }
+    ]
+  });
+  const expected =   {
+    data: {
+      id: 1,
+      type: 'user',
+      attributes: {
+        name: 'Krisz',
+        admin: true
+      },
       relationships: {}
     },
     included: []
